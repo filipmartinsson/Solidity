@@ -1,0 +1,96 @@
+<html>
+	<head>
+	    <script src="./node_modules/web3/dist/web3.min.js"></script>
+	    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	</head>
+	<body>
+	    <div>
+
+	        <h1 id="value" >Value test</h1>
+
+	        <label>Value</label>
+	        <input id="input">
+
+	        <button id="button">Update Value</button>
+
+
+	    </div>
+
+	    <script>
+
+	    	if(typeof(web3) !== 'undefined'){
+	    		web3 = new Web3(web3.currentProvider);
+	    	}
+	    	else{
+	    		web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+	    	}
+
+	    	web3.eth.defaultAccount = web3.eth.accounts[0];
+
+	    	var valueContract = web3.eth.contract([
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "value",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getValue",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newValue",
+				"type": "uint256"
+			}
+		],
+		"name": "setValue",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]);
+
+	    	var value = valueContract.at("0xa18bb5d80aaec0267d35542d5070c93abc89d89c");
+
+	    	value.getValue(function(error, result){
+	    		if(!error){
+	    			$('#value').html(result.toString());
+	    		}
+	    		else{
+	    			console.log(error);
+	    		}
+	    	});
+
+	    	$('#button').click(function(){
+	    		value.setValue($('#input').val());
+	    	});
+
+	    </script>	
+
+	</body>
+</html>
+
+
+
