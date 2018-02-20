@@ -1,0 +1,156 @@
+
+<html>
+<head>
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+</head>
+<body>
+    <div>
+
+        <h1 >My bank</h1>
+
+        <div>
+            <span>Owner: </span><span id="owner"></span>
+        </div>
+        <div>
+            <span>Balance: </span><span id="balance"></span>
+        </div>
+    
+
+    </div>
+    <script>
+    	if(typeof web3 !== 'undefined'){
+    		web3 = new Web3(web3.currentProvider);
+    	}
+    	else{
+    		web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+    	}
+
+    	web3.eth.defaultAccount = web3.eth.accounts[0];
+
+    	var bankContract = web3.eth.contract([
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"name": "DepositEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"name": "WithdrawEvent",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	}
+]);
+
+    	var bank = bankContract.at("0x844c7d39f01c8c184465ab5409c2d46bf63373a4");
+    	var depositEvent = bank.DepositEvent();
+
+    	bank.getBalance(function(error, result){
+    		if(!error){
+    			$("#balance").html(result.toString());
+    		}
+    		else{
+    			console.log(error);
+    		}
+    	});
+
+    	bank.owner(function(error, result){
+			if(!error){
+    			$("#owner").html(result);
+    		}
+    		else{
+    			console.log(error);
+    		}
+    	});
+
+    	depositEvent.watch(function(error, result){
+    		if(!error){
+    			$("#balance").html(result.args.balance.toString());
+    		}
+    		else{
+    			console.log(error);
+    		}
+    	});
+    </script>
+</body>
+</html>
