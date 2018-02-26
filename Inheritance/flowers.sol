@@ -1,30 +1,26 @@
-pragma solidity ^0.4.16;
+pragma solidity ^0.4.0;
 
 contract Flower {
     address owner;
     string flowerType;
-
-    function Flower(string newFlowerType) { 
-        owner = msg.sender; 
+    
+    function Flower(string newFlowerType){
+        owner = msg.sender;
         flowerType = newFlowerType;
     }
-    
     function water() constant returns (string){
-        return "Thanks, I love water!";
+        return "Aww thanks, I love water!";
     }
-    
 }
 
-contract Rose is Flower("Rose") {
-
+contract Rose is Flower("Rose"){
     function pick() constant returns (string){
-        return "Ouch";
+        return "Ouch...";
     }
 }
 
-contract Jasmine is Flower("Jasmine") {
+contract Jasmine is Flower("Jasmine"){
     function smell() constant returns (string){
-        return "Mmmmmm";
+        return "Mmmmm, smells good";
     }
 }
-
