@@ -12,12 +12,12 @@ contract Group{
         ages.push(Person(_name, _age));
     }
 
-    function getAvarageAge() returns (uint){
+    function getAvarageAge() view returns (uint){
         uint total;
         for (uint i=0; i < ages.length; i++) {
             total += ages[i].age;
         }
         return total/ages.length;
     }
-
+    
 }
