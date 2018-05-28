@@ -1,21 +1,30 @@
-
 pragma solidity ^0.4.16;
 
-interface YOURTOKENHERE {
+interface FilipCoin {
     function transfer(address receiver, uint amount);
 }
 
 contract Crowdsale {
+
     address public beneficiary;
     uint public fundingGoal;
-    uint public amountRaised;
+    uint public totalAmountRaised;
     uint public crowdSaleDeadline;
     uint public tokenPrice;
-    YOURTOKENHERE public token;
-    mapping(address => uint256) public balanceOf;
+    FilipCoin public token;
+    mapping(address => uint) public balanceOf;
     bool fundingGoalReached = false;
-    bool crowdsaleClosed = false;
+    bool crowdSaleClosed = false;
 
+
+    /**
+     * Constructor
+     * ifSuccessfulSendTo: Address where funds should be sent if sale reaches target
+     * goalInEther: What is the target goal for the crowdsale in ethers.
+     * durationInMinutes: How long will the crowdsale be running.
+     * tokenPriceInEther: How much does each token cost
+     * addressOfToken: Where is the token contract deployed.
+     */
     function Crowdsale(
         address ifSuccessfulSendTo,
         uint goalInEther,
@@ -24,69 +33,64 @@ contract Crowdsale {
         address addressOfToken
     ) {
         beneficiary = ifSuccessfulSendTo;
-        fundingGoal = goalInEther * 1 ether;
+        fundingGoal = goalInEther;
         crowdSaleDeadline = now + durationInMinutes * 1 minutes;
         tokenPrice = tokenPriceInEther * 1 ether;
-        token = YOURTOKENHERE(addressOfToken);
+        token = FilipCoin(addressOfToken);
     }
 
     /**
      * Fallback function
      *
-     * The function without name is the default function that is called whenever anyone sends funds to a contract
+     * Default function which gets called when someone sends money to the contract. Will be used for joining sale.
      */
     function () payable {
-        require(!crowdsaleClosed);
+        require(!crowdSaleClosed);
         uint amount = msg.value;
         balanceOf[msg.sender] += amount;
-        amountRaised += amount;
-        token.transfer(msg.sender, amount / price);
+        totalAmountRaised += amount;
+        token.transfer(msg.sender, amount/tokenPrice);
     }
 
+    /**
+     * Modifier used to check if deadline for crowdsale has passed
+     */
     modifier afterDeadline() {
-      if (now >= deadline){
-           _;
+        if(now >= crowdSaleDeadline){
+            _;
         }
     }
 
     /**
-     * Check if goal was reached
+     * Check if the funding goal was reached. Will only be checked if afterDeadline modifier above is true.
      *
-     * Checks if the goal or time limit has been reached and ends the campaign
      */
     function checkGoalReached() afterDeadline {
-        if (amountRaised >= fundingGoal){
+        if(totalAmountRaised >= fundingGoal){
             fundingGoalReached = true;
         }
-        crowdsaleClosed = true;
+        crowdSaleClosed = true;
     }
 
 
     /**
      * Withdraw the funds
      *
-     * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
-     * sends the entire amount to the beneficiary. If goal was not reached, each contributor can withdraw
-     * the amount they contributed.
+     * Will withdraw the money after the deadline has been reached. If the goal was reached, only the owner can withdraw money to the beneficiary account.
+     * If you goal was not reached, everyone who participated can withdraw their share.
      */
     function safeWithdrawal() afterDeadline {
-        if (!fundingGoalReached) {
+        if(!fundingGoalReached){
             uint amount = balanceOf[msg.sender];
             balanceOf[msg.sender] = 0;
-            if (amount > 0) {
-                if (msg.sender.send(amount)) {
-                    FundTransfer(msg.sender, amount, false);
-                } else {
+            if(amount > 0){
+                if(!msg.sender.send(amount)){
                     balanceOf[msg.sender] = amount;
                 }
             }
         }
-
-        if (fundingGoalReached && beneficiary == msg.sender) {
-            if (beneficiary.send(amountRaised)) {
-                FundTransfer(beneficiary, amountRaised, false);
-            } else {
-                //If we fail to send the funds to beneficiary, unlock funders balance
+        if(fundingGoalReached && msg.sender == beneficiary){
+            if(!beneficiary.send(totalAmountRaised)){
                 fundingGoalReached = false;
             }
         }
