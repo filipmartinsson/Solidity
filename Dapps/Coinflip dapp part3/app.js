@@ -23,14 +23,37 @@
         });
     }
 
+    function waitForReceipt(txHash, cb){
+      web3.eth.getTransactionReceipt(txHash, function(err, receipt){
+        if(error{
+          alert(err);
+        }
+        else if(receipt !== null){
+          cb(receipt);
+        }
+        else{
+          window.setTimeout(function(){
+            waitForReceipt(txHash, cb);
+          }, 5000);
+        }
+      })
+    }
+
     function flip(){
       let val = parseInt($("#bet").val());
-      instance.flip.sendTransaction({from: "ADDRESS", gas:100000, val}, function(error, result){
+      instance.flip.sendTransaction({from: "ADDRESS", gas:100000, val}, function(error, txHash){
         if(error){
           alert(error);
         }
         else{
-            alert("SUCCESS");
+            waitForReceipt(txHash, function(receipt){
+              if(receipt.status === "0x1"){
+                alert(JSON.stringify(receipt));
+              }
+              else{
+                alert("receipt status fail");
+              }
+            });
         }
       })
     }
