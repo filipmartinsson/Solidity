@@ -15,7 +15,7 @@ contract Person{
         name = _name;
     }
 
-    function setAge(uint _age) returns(uint){
+    function setAge(uint _age){
         age = _age;
     }
 }
