@@ -43,7 +43,7 @@
     }
 
     function getResult(){
-      instance.getLastFlip(accounts[0], function(){
+      instance.getLastFlip(accounts[0], function(error, result){
         if(result){
           $("#result").html("You won!");
         }
