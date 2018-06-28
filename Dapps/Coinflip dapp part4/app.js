@@ -21,7 +21,7 @@
               alert(error);
             }
             else{
-              $("balance").html(result.toString());
+              $("#balance").html(result.toString());
             }
         });
     }
