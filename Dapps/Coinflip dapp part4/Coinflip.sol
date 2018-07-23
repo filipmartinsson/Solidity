@@ -8,7 +8,7 @@ contract Coinflip {
   }
 
   function getBalance() constant public returns (uint){
-    return this.balance;
+    return address(this).balance;
   }
 
   function flip() payable public{
