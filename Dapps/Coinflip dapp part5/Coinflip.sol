@@ -9,7 +9,7 @@ contract Coinflip {
   }
 
   function getBalance() constant public returns (uint){
-    return this.balance;
+    return address(this).balance;
   }
 
   function getLastFlip(address player) constant public returns (bool){
