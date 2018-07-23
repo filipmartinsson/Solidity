@@ -53,5 +53,8 @@
                   $('#message').append(result);
               });
           });
+          $(’#submitButton’).click(function() {
+              updateMessage();
+          });
       });
 })(Contracts['HelloWorld']);
