@@ -25,7 +25,7 @@
 
     function waitForReceipt(txHash, cb){
       web3.eth.getTransactionReceipt(txHash, function(err, receipt){
-        if(error{
+        if(error){
           alert(err);
         }
         else if(receipt !== null){
