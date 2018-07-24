@@ -11,7 +11,7 @@ contract Person{
     function getAge() view returns(uint){
         return age;
     }
-    function setName(string _name) returns (string) {
+    function setName(string _name){
         name = _name;
     }
 
