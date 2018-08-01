@@ -41,7 +41,7 @@
 
     function flip(){
       let val = parseInt($("#bet").val());
-      instance.flip.sendTransaction({from: "ADDRESS", gas:100000, val}, function(error, txHash){
+      instance.flip.sendTransaction({from: "ADDRESS", gas:100000, value: val}, function(error, txHash){
         if(error){
           alert(error);
         }
