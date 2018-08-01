@@ -14,7 +14,6 @@ contract DogContract {
         address owner = msg.sender;
         uint id = dogs.push(Dog(_name, _age));
         ownerToDog[owner] = id;
-        addedDog(owner, _name, id);
     }
 
     function getDog() returns (string) {
