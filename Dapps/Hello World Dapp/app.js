@@ -53,7 +53,7 @@
                   $('#message').append(result);
               });
           });
-          $(’#submitButton’).click(function() {
+          $('#submitButton').click(function() {
               updateMessage();
           });
       });
